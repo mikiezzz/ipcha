@@ -1,0 +1,7 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {parseTarget,reverseName,ipType} from '../dist/app.js';
+test('IPv4 and IPv6 validation',()=>{for(const ip of ['8.8.8.8','0.0.0.0','255.255.255.255'])assert.equal(ipType(ip),'IPv4');for(const ip of ['::1','2001:db8::1','::ffff:192.0.2.1'])assert.equal(ipType(ip),'IPv6');for(const ip of ['256.1.1.1','1.2.3','2001:::1','01.2.3.4'])assert.equal(ipType(ip),null);});
+test('URLs and domains normalize without fetching their path',()=>{assert.equal(parseTarget('https://example.com/a?secret=1').host,'example.com');assert.equal(parseTarget('http://[2001:db8::1]:8080/a').host,'2001:db8::1');assert.equal(parseTarget('EXAMPLE.COM').host,'example.com');assert.equal(parseTarget('https://例子.中国').type,'domain');assert.equal(parseTarget('2606:4700:4700::1111').type,'IPv6');});
+test('reject malformed addresses and unsafe URL schemes',()=>{for(const input of ['','999.1.1.1','javascript://example.com','ftp://example.com','https://user:pass@example.com','invalid domain','localhost','https://-abc.com'])assert.throws(()=>parseTarget(input));});
+test('PTR for IPv4, compressed and mapped IPv6',()=>{assert.equal(reverseName('8.8.4.4'),'4.4.8.8.in-addr.arpa');assert.equal(reverseName('::1'),'1.'+'0.'.repeat(31)+'ip6.arpa');assert.equal(reverseName('2001:db8::1'),reverseName('2001:0db8:0000:0000:0000:0000:0000:0001'));assert.equal(reverseName('::ffff:192.0.2.1'),reverseName('::ffff:c000:201'));});
