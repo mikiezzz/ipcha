@@ -51,7 +51,7 @@ npm test
 
 ## 部署
 
-网站资源已位于 `dist/`，无需构建。Cloudflare Pages 上传 `dist/` 内容时请保留 `split/`、`icons/`、`fonts/` 及分流模块和样式。若连接 Git 仓库，框架选 None，构建命令可用 `exit 0`，输出目录填 `dist`。部署后请验证首页和 `/split/`。[中英部署指南](docs/DEPLOYMENT.md)
+当前线上 [ip.mikies.click](https://ip.mikies.click/) 由 Cloudflare Worker `ipcha` 提供静态资源。仓库根目录的 `wrangler.jsonc` 指向 `./dist`，其中包含 `split/`、`icons/` 和 `fonts/`。计划更新时，在仓库根目录运行 `npx wrangler@latest login` 和 `npx wrangler@latest deploy`。域名及 DNS 沿用现有配置。部署后如遇旧资源，先强制刷新，必要时清理缓存。回滚可用 `npx wrangler@latest deployments list` 和 `npx wrangler@latest rollback`。详见[中英部署指南](docs/DEPLOYMENT.md)。
 
 这个仓库不包含账户配置、部署凭据或原托管平台的 Git 历史。
 
