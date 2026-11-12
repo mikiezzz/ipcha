@@ -49,7 +49,7 @@ Tests cover input validation, IPv4 / IPv6, PTR, DNS fallback and CNAME handling,
 
 ## Deploy
 
-`dist/` contains deployable assets with no build step. Upload its contents to Cloudflare Pages, preserving `split/`, `icons/`, `fonts/`, and the split-test modules and styles. For a new Git-integrated Pages project, choose framework None, use `exit 0` as the build command and `dist` as the output directory. Check both the home page and `/split/` after deployment. [Bilingual deployment guide](docs/DEPLOYMENT.md)
+The live site at [ip.mikies.click](https://ip.mikies.click/) is served by the Cloudflare Worker `ipcha` using static assets. The repository-root `wrangler.jsonc` points to `./dist`, including `split/`, `icons/`, and `fonts/`. To update it, run `npx wrangler@latest login` and `npx wrangler@latest deploy` from the repository root. Keep the existing domain and DNS configuration. Hard-refresh after deployment or purge the affected cache entries if stale assets persist. For rollback, use `npx wrangler@latest deployments list` and `npx wrangler@latest rollback`. See the [bilingual deployment guide](docs/DEPLOYMENT.md).
 
 This distribution excludes account configuration, deployment credentials and the original hosting repository history.
 
