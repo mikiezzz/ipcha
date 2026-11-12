@@ -17,10 +17,19 @@ Built with AI assistance and open source under the [MIT License](LICENSE). Use, 
 - Identify some known anycast addresses from public ranges and service addresses, with evidence and public DNS traces.
 - Chinese / English / Japanese, light / dark themes, address copying, JSON export and browser-local query history.
 - Static frontend, no registration and no third-party runtime packages.
+- Website split-tunnel test v2 runs six probes on the home page. The dedicated page shows all 20 sites with category filters, egress summaries and IP copying.
 
 ## AI disclosure
 
 The author defined the requirements, reviewed the experience and deployed the website. **OpenAI Codex** assisted with interface design, implementation, documentation and automated tests. AI involvement does not guarantee accuracy or imply endorsement by OpenAI.
+
+## Website split-tunnel test
+
+The home page's **Split snapshot** checks ChatGPT, Claude, X, NetEase, ByteDance and Qualcomm China. **View all 20 sites** opens `/split/`, where you can filter results by category, see egress and average latency summaries, and copy returned IP addresses.
+
+Each page starts one run when it is visible and the browser is idle after the initial render. You can stop the run or test again. The browser sends requests directly to each probe and counts only valid returned IP addresses. Latency bars measure HTTP request time, not ICMP ping. HTTP 403, 429, 451 and 503 are marked **Blocked** with elapsed time. HTTP 200 responses without a valid IP are marked **Latency only**. Timeouts and other failures retain their status and elapsed time. Browser-blocked or network failures without a readable response show **Unavailable** with no latency. [Probe list and privacy details](docs/PRIVACY.md#网站分流测试--website-split-tunnel-test)
+
+When Discord's fallback endpoint returns an IP, the row shows **Fallback endpoint**. Cloudflare trace locations follow the selected language. For NetEase, ByteDance and ip.sb, country names follow the selected language when a country code is available. City names may retain the provider's language. PChome, ip.cn, NetEase and ByteDance locations can therefore contain untranslated provider text. The site serves icons locally for identification. Trademarks belong to their respective owners. A monogram can replace an unavailable icon, an icon that fails to load, or one with copyright concerns.
 
 ## Run locally
 
@@ -30,17 +39,17 @@ Install Node.js 22 or newer and run from the repository root:
 npm start
 ```
 
-Open <http://127.0.0.1:4173>. No `npm install` is needed. Serve the site over HTTP; opening `dist/index.html` directly will not correctly load modules and root-relative assets.
+Use the local HTTP server to open either page. The project has no runtime packages to install. [Home](http://127.0.0.1:4173/) · [Full split test](http://127.0.0.1:4173/split/)
 
 ```sh
 npm test
 ```
 
-Tests cover input validation, IPv4 / IPv6, PTR, DNS fallback and CNAME handling, anycast classification, translation and refreshed detection. Network responses are mocked; passing tests do not establish worldwide availability of external services.
+Tests cover input validation, IPv4 / IPv6, PTR, DNS fallback and CNAME handling, anycast classification, translation, refreshed detection and split probes. Automated network tests use simulated responses. Live availability depends on the browser and network.
 
 ## Deploy
 
-`dist/` contains deployable assets with no build step. Upload its contents to Cloudflare Pages. For a new Git-integrated Pages project, choose framework None, use `exit 0` as the build command and `dist` as the output directory. See the [bilingual deployment guide](docs/DEPLOYMENT.md).
+`dist/` contains deployable assets with no build step. Upload its contents to Cloudflare Pages, preserving `split/`, `icons/`, `fonts/`, and the split-test modules and styles. For a new Git-integrated Pages project, choose framework None, use `exit 0` as the build command and `dist` as the output directory. Check both the home page and `/split/` after deployment. [Bilingual deployment guide](docs/DEPLOYMENT.md)
 
 This distribution excludes account configuration, deployment credentials and the original hosting repository history.
 
@@ -75,6 +84,13 @@ This source contains no custom query-log backend and does not request GPS locati
 ```text
 dist/                  Deployable HTML, CSS, logo and JavaScript modules
   app.js               Lookup UI, history and export
+  split/index.html     Full split-test page
+  split-core.js        Shared probe runner
+  split-probes.js      Probe definitions and response parsing
+  split-widget.js/css  Home-page split snapshot
+  split-page.js/css    Full split-test controls and styles
+  icons/               Locally served site icons
+  fonts/               Self-hosted DM Sans and its license
   network.js           Connection and IPv4 / IPv6 detection
   dns.js               DNS fallback and CNAME following
   address-info.js      Address classification

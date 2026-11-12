@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#147d68">
+  <meta name="description" content="自动检测 20 个站点，查看浏览器的出口 IP 和 HTTP 请求耗时。">
+  <title>网站分流测试 · ip查</title>
+  <link rel="icon" href="/logo.svg" type="image/svg+xml">
+  <script>
+(() => {
+  try {
+    const dark = localStorage.getItem('ipcha.theme') === 'dark';
+    const root = document.documentElement;
+    root.classList.toggle('dark', dark);
+    root.style.colorScheme = dark ? 'dark' : 'light';
+    root.style.backgroundColor = dark ? '#0f1b17' : '#f7f9f7';
+  } catch {}
+})();
+</script>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/split-page.css">
+</head>
+<body><header class="header">
+  <a class="brand" href="/" aria-label="ip查 首页"><img src="/logo.svg" width="40" height="40" alt="互联网地球中间的 ip 标志"><span>ip查<span class="brand-dot">.</span></span></a>
+  <nav class="primary-nav" aria-label="主导航">
+    <a class="nav-tab" href="/">IP 查询</a>
+    <a class="nav-tab" href="/split/" aria-current="page">分流测试</a>
+  </nav>
+  <div class="header-tools">
+    <label class="sr-only" for="language">选择语言</label>
+    <select id="language" class="language-select" aria-label="选择语言"><option value="zh-CN" lang="zh-CN">中文</option><option value="en" lang="en">English</option><option value="ja" lang="ja">日本語</option></select>
+    <button id="theme" class="icon-button" aria-label="切换深色模式" title="切换深色模式" aria-pressed="false" type="button">◐</button>
+  </div>
+</header>
+<main class="split-page">
+  <section class="intro split-page-intro" aria-labelledby="split-page-title">
+    <h1 id="split-page-title">网站分流测试</h1>
+    <p>自动检测 20 个站点，查看浏览器的出口 IP 和 HTTP 请求耗时。</p>
+  </section>
+  <section class="panel split-page-panel" aria-labelledby="split-page-title">
+    <div class="split-page-controls">
+      <div id="split-page-summary" class="split-page-summary" role="status" aria-atomic="true">
+        <span id="split-page-sites">20 个站点</span>
+        <span id="split-page-egress">0 个出口</span>
+        <span id="split-page-average">平均 —</span>
+      </div>
+      <div class="split-page-actions">
+        <button id="split-page-stop" class="text-button split-page-stop" type="button" aria-controls="split-page-rows">停止</button>
+        <button id="split-page-retry" class="primary" type="button" aria-controls="split-page-rows" disabled>重新测试</button>
+      </div>
+    </div>
+    <details class="split-page-hosts">
+      <summary>页面加载后会自动连接以下站点…</summary>
+      <p id="split-page-hosts" data-i18n-skip></p>
+    </details>
+    <div class="split-page-filter">
+      <label for="split-page-category">按类别筛选</label>
+      <select id="split-page-category" class="language-select">
+        <option value="">全部</option>
+        <option value="国内">国内</option>
+        <option value="国际">国际</option>
+        <option value="AI">AI</option>
+        <option value="静态资源">静态资源</option>
+        <option value="IP 服务">IP 服务</option>
+      </select>
+    </div>
+    <table class="split-page-table" aria-labelledby="split-page-title" role="table">
+      <thead role="rowgroup">
+        <tr role="row">
+          <th scope="col" role="columnheader">网站</th>
+          <th scope="col" role="columnheader">方式</th>
+          <th scope="col" role="columnheader">出口 IP</th>
+          <th scope="col" role="columnheader">归属地</th>
+          <th scope="col" role="columnheader">延迟</th>
+          <th scope="col" role="columnheader">状态</th>
+        </tr>
+      </thead>
+      <tbody id="split-page-rows" aria-busy="true" role="rowgroup"></tbody>
+    </table>
+    <p class="footnote">HTTP 请求耗时，不是 ICMP Ping。</p>
+    <details class="split-page-explanation">
+      <summary>这些结果是怎么来的？</summary>
+      <p>浏览器会直接访问各站探针，并从 Cloudflare trace、CDN 响应头或 JSONP 等响应中读取出口 IP。</p>
+      <p>未回显出口 IP 的站点只能显示请求耗时。</p>
+      <p>官方图标仅用于识别，商标归各站所有。</p>
+    </details>
+  </section>
+</main>
+<footer><a class="brand" href="/"><img src="/logo.svg" width="27" height="27" alt=""><span>ip查.</span></a><span>连接世界，从了解连接开始。</span>
+  <span>数据：<a href="https://freeipapi.com/" target="_blank" rel="noopener noreferrer">FreeIPAPI</a> · <a href="https://ipwhois.io/" target="_blank" rel="noopener noreferrer">ipwho.is</a> · <a href="https://www.ipify.org/" target="_blank" rel="noopener noreferrer">ipify</a> · <a href="https://developers.google.com/speed/public-dns" target="_blank" rel="noopener noreferrer">Google DNS</a></span></footer><div id="toast" role="status" aria-live="polite"></div><script type="module" src="/split-page.js"></script></body></html>

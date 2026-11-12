@@ -155,9 +155,29 @@ async function detect() {
 }
 if (typeof document !== 'undefined') {
   initializeLanguages();
+  document.querySelectorAll('.nav-tab[aria-current="page"]').forEach(link => {
+    link.addEventListener('click', event => {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (new URL(link.href).pathname === location.pathname) event.preventDefault();
+    });
+  });
   document.addEventListener('ipcha:language',()=>{if(currentData){$('myDetails').replaceChildren(fields(currentData,true));if(currentData.error)$('myDetails').append(el('p','footnote',currentData.error));}if(latest)showData(latest);});
-  try { document.body.classList.toggle('dark',localStorage.getItem('ipcha.theme')==='dark'); } catch {}
-  $('theme').onclick=()=>{const dark=document.body.classList.toggle('dark');$('theme').setAttribute('aria-pressed',String(dark));try{localStorage.setItem('ipcha.theme',dark?'dark':'light');}catch{}};
+  const root = document.documentElement;
+  const theme = $('theme');
+  function applyTheme(dark) {
+    root.classList.toggle('dark', dark);
+    root.style.colorScheme = dark ? 'dark' : 'light';
+    root.style.backgroundColor = dark ? '#0f1b17' : '#f7f9f7';
+    theme.setAttribute('aria-pressed', String(dark));
+  }
+  let dark = root.classList.contains('dark');
+  try { dark = localStorage.getItem('ipcha.theme') === 'dark'; } catch {}
+  applyTheme(dark);
+  theme.onclick = () => {
+    dark = !dark;
+    applyTheme(dark);
+    try { localStorage.setItem('ipcha.theme', dark ? 'dark' : 'light'); } catch {}
+  };
   $('searchForm').onsubmit=e=>{e.preventDefault();lookup($('query').value);};
   document.querySelectorAll('[data-example]').forEach(b=>b.onclick=()=>{$('query').value=b.dataset.example;lookup(b.dataset.example);});
   $('refresh').onclick=detect; $('clearHistory').onclick=()=>{try{localStorage.removeItem('ipcha.history');}catch{}renderHistory();toast('查询历史已清空');};
